@@ -1,6 +1,10 @@
 import logging
 from datetime import timedelta
-from homeassistant.components.sensor import SensorEntity
+from homeassistant.components.sensor import (
+    SensorDeviceClass,
+    SensorEntity,
+    SensorStateClass,
+)
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, CoordinatorEntity
 from .const import DOMAIN, CONF_TANK_HOST, CONF_TANK_NAME, CONF_TANK_PROTOCOL, CONF_UPDATE_INTERVAL
 from .pyhelialux.pyHelialux import Controller as Helialux
@@ -23,10 +27,10 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     # Create individual sensors with default values
     attribute_sensors = [
         JuwelHelialuxAttributeSensor(coordinator, tank_name, "current_profile", default_value="offline"),
-        JuwelHelialuxAttributeSensor(coordinator, tank_name, "white", default_value=0),
-        JuwelHelialuxAttributeSensor(coordinator, tank_name, "blue", default_value=0),
-        JuwelHelialuxAttributeSensor(coordinator, tank_name, "green", default_value=0),
-        JuwelHelialuxAttributeSensor(coordinator, tank_name, "red", default_value=0),
+        JuwelHelialuxAttributeSensor(coordinator, tank_name, "white", default_value=0, SensorStateClass=SensorStateClass.MEASUREMENT, unit="%"),
+        JuwelHelialuxAttributeSensor(coordinator, tank_name, "blue", default_value=0, SensorStateClass=SensorStateClass.MEASUREMENT, unit="%"),
+        JuwelHelialuxAttributeSensor(coordinator, tank_name, "green", default_value=0, SensorStateClass=SensorStateClass.MEASUREMENT, unit="%"),
+        JuwelHelialuxAttributeSensor(coordinator, tank_name, "red", default_value=0, SensorStateClass=SensorStateClass.MEASUREMENT, unit="%"),
         JuwelHelialuxAttributeSensor(coordinator, tank_name, "manualColorSimulationEnabled", default_value=False),
         JuwelHelialuxAttributeSensor(coordinator, tank_name, "manualDaytimeSimulationEnabled", default_value=False),
         JuwelHelialuxAttributeSensor(coordinator, tank_name, "deviceTime", default_value=None),
@@ -128,14 +132,15 @@ class JuwelHelialuxSensor(CoordinatorEntity, SensorEntity):
 class JuwelHelialuxAttributeSensor(CoordinatorEntity, SensorEntity):
     """Creates a sensor for each individual attribute."""
 
-    def __init__(self, coordinator, tank_name, attribute, default_value=None):
+    def __init__(self, coordinator, tank_name, attribute, default_value=None, SensorStateClass="", unit=""):
         """Initialize the sensor."""
         super().__init__(coordinator)
         self._attr_name = f"{tank_name} {attribute}"
         self._attr_unique_id = f"{tank_name}_{attribute}"
         self._attribute = attribute
         self._default_value = default_value  # Default value if no data is available
-
+        self._attr_state_class = SensorStateClass
+        self._attr_native_unit_of_measurement = unit
     @property
     def state(self):
         data = self.coordinator.data or {}  # Ensure data is always a dictionary
