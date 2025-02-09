@@ -1,14 +1,15 @@
 import logging
-from datetime import timedelta
+
 from homeassistant.components.sensor import (
     SensorDeviceClass,
     SensorEntity,
     SensorStateClass,
 )
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, CoordinatorEntity
+from homeassistant.helpers.device_registry import DeviceInfo
 from .const import DOMAIN, CONF_TANK_HOST, CONF_TANK_NAME, CONF_TANK_PROTOCOL, CONF_UPDATE_INTERVAL
-from .pyhelialux.pyHelialux import Controller as Helialux
 
+from .coordinator import JuwelHelialuxCoordinator as JuwelHelialuxCoordinator
 _LOGGER = logging.getLogger(__name__)
 
 async def async_setup_entry(hass, config_entry, async_add_entities):
@@ -17,7 +18,6 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     tank_host = config_entry.data[CONF_TANK_HOST]
     tank_protocol = config_entry.data[CONF_TANK_PROTOCOL]
     update_interval = config_entry.data.get(CONF_UPDATE_INTERVAL, 1)
-
     coordinator = JuwelHelialuxCoordinator(hass, tank_host, tank_protocol, update_interval)
     await coordinator.async_config_entry_first_refresh()
 
@@ -39,64 +39,23 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     # Add all sensors to Home Assistant
     async_add_entities([main_sensor] + attribute_sensors, True)
 
-class JuwelHelialuxCoordinator(DataUpdateCoordinator):
-    """Class to manage fetching data from the Juwel Helialux device."""
 
-    def __init__(self, hass, tank_host, tank_protocol, update_interval):
-        super().__init__(
-            hass,
-            _LOGGER,
-            name="Juwel Helialux Sensor",
-            update_interval=timedelta(minutes=update_interval),
-        )
-        self.tank_host = tank_host
-        self.tank_protocol = tank_protocol
-        _LOGGER.debug("Init started")
-        url = f"{self.tank_protocol}://{self.tank_host}" if "://" not in self.tank_protocol else f"{self.tank_protocol}{self.tank_host}"
-        self.helialux = Helialux(url)
-
-    async def _async_update_data(self):
-        try:
-            data = await self.helialux.get_status()
-            _LOGGER.debug("Raw data received from Helialux: %s", data)
-
-            if not isinstance(data, dict):
-                _LOGGER.warning(
-                    "Unexpected data format from Helialux device, defaulting to empty dict. Received: %s", type(data)
-                )
-                return {}
-            # Initialize self.data as an empty dict if it's None
-            if self.data is None:
-                self.data = {}
-                
-            # Ensure we always include profile and color data
-            profile = data.get("currentProfile", "offline")
-            deviceTime = data.get("deviceTime", "00:00")
-            
-            color_data = {
-                "red": data.get("currentRed", 0),
-                "green": data.get("currentGreen", 0),
-                "blue": data.get("currentBlue", 0),
-                "white": data.get("currentWhite", 0),
-            }
-
-            # Merge profile and color data to retain all attributes
-            self.data.update({"current_profile": profile, **color_data, "deviceTime": deviceTime})  # Ensure no data is lost
-
-            return self.data
-
-        except Exception as e:
-            _LOGGER.error("Error fetching data from Helialux device: %s", e)
-            return {}  # Ensure empty dictionary on failure
 
 class JuwelHelialuxSensor(CoordinatorEntity, SensorEntity):
     """Main sensor containing all data as attributes."""
 
-    def __init__(self, coordinator, tank_name):
+    def __init__(self,  coordinator, tank_name):
         super().__init__(coordinator)
+        
         self._attr_name = f"{tank_name} Sensor"
         self._attr_unique_id = f"{tank_name}_sensor"
-
+        self._attr_device_info = DeviceInfo(
+            identifiers={(DOMAIN, tank_name)},
+            name=tank_name,
+            manufacturer="Juwel",
+            model="Juwel Helialux",
+            configuration_url=f"{coordinator.tank_protocol}://{coordinator.tank_host}",
+        )
     @property
     def state(self):
         """Return 'online' if data is available, otherwise 'offline'."""
@@ -124,6 +83,7 @@ class JuwelHelialuxSensor(CoordinatorEntity, SensorEntity):
         # Merge the color and profile data together
         return {**self.coordinator.data, **color_data, **profile_data, **time_data}
 
+
     async def async_remove(self):
         """Cleanup resources when the entity is removed."""
         _LOGGER.debug(f"Removing entity: {self.entity_id}")
@@ -141,11 +101,19 @@ class JuwelHelialuxAttributeSensor(CoordinatorEntity, SensorEntity):
         self._default_value = default_value  # Default value if no data is available
         self._attr_state_class = SensorStateClass
         self._attr_native_unit_of_measurement = unit
+        self._attr_device_info = DeviceInfo(
+            identifiers={(DOMAIN, tank_name)},
+            name=tank_name,
+            manufacturer="Juwel",
+            model="Juwel Helialux",
+            configuration_url=f"{coordinator.tank_protocol}://{coordinator.tank_host}",
+        )        
     @property
     def state(self):
         data = self.coordinator.data or {}  # Ensure data is always a dictionary
         # Return the attribute value, or a default if not found
         return data.get(self._attribute, self._default_value)
+ 
 
     async def async_remove(self):
         """Cleanup resources when the entity is removed."""

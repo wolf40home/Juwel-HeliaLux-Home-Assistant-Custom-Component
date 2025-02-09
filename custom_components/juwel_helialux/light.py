@@ -8,6 +8,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
+from homeassistant.helpers.device_registry import DeviceInfo
 from .const import DOMAIN, CONF_UPDATE_INTERVAL
 
 _LOGGER = logging.getLogger(__name__)
@@ -55,7 +56,14 @@ class JuwelHelialuxLight(CoordinatorEntity, LightEntity):
         self._attr_is_on = False
         self._attr_brightness = None
         self._attr_rgbw_color = (0, 0, 0, 0)
+        self._attr_device_info = DeviceInfo(
+            identifiers={(DOMAIN, tank_name)},
+            name=tank_name,
+            manufacturer="Juwel",
+            model="Juwel Helialux",
+            configuration_url=f"{coordinator.tank_protocol}://{coordinator.tank_host}",
 
+        ) 
     @property
     def is_on(self):
         """Return true if light is on (any RGBW value is greater than 0)."""

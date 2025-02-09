@@ -1,17 +1,11 @@
-from .sensor import JuwelHelialuxCoordinator 
+from .coordinator import JuwelHelialuxCoordinator 
 from .const import DOMAIN, CONF_TANK_HOST, CONF_TANK_PROTOCOL, CONF_UPDATE_INTERVAL
+
 
 async def async_setup(hass, config):
     hass.data.setdefault(DOMAIN, {})  # Ensure DOMAIN is always in hass.data
     return True
-
-#async def async_setup_entry(hass, entry):
-#    """Set up a config entry for the Juwel Helialux integration."""
-#    # Forward the setup to the platforms asynchronously (no direct import)
-#    #await hass.config_entries.async_forward_entry_setups(entry, ["sensor", "light"])
-#    await hass.config_entries.async_forward_entry_setups(entry, ["sensor", "light"])
-#    return True
-
+    
 async def async_setup_entry(hass, entry):
     """Set up a config entry for the Juwel Helialux integration."""
     
