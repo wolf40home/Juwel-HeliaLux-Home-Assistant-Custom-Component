@@ -1,4 +1,24 @@
 {
+  "title": "Juwel HeliaLux",
+  "entity": {
+    "sensor": {
+      "white": {
+        "name": "white"
+      },
+      "blue": {
+        "name": "blue"
+      },
+      "green": {
+        "name": "green"
+      },
+      "current_profile": {
+        "name": "current profile"
+      },
+      "deviceTime": {
+        "name": "device Time"
+      }	  
+    }
+  },  
   "config": {
     "step": {
       "user": {

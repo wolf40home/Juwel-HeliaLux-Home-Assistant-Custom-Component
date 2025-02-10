@@ -10,7 +10,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 from homeassistant.helpers.device_registry import DeviceInfo
 from .const import DOMAIN, CONF_UPDATE_INTERVAL
-
+from .device_info import JuwelHelialuxDeviceInfo
 _LOGGER = logging.getLogger(__name__)
 
 async def async_setup_entry(
@@ -62,8 +62,8 @@ class JuwelHelialuxLight(CoordinatorEntity, LightEntity):
             manufacturer="Juwel",
             model="Juwel Helialux",
             configuration_url=f"{coordinator.tank_protocol}://{coordinator.tank_host}",
+        )
 
-        ) 
     @property
     def is_on(self):
         """Return true if light is on (any RGBW value is greater than 0)."""

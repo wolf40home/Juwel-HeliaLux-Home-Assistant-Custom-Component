@@ -1,5 +1,5 @@
 {
-  "name": "Juwel Helialux Smart Controller",
-  "country": "GB",
-  "homeassistant": "2025.1.1"
+  "name": "Juwel Helialux Smart Controller Device",
+  "country": "DE",
+  "homeassistant": "2025.2.1"
 }

@@ -1,5 +1,4 @@
-# Define constants for the integration
-DOMAIN = "juwel_helialux"
+DOMAIN = "juwel_helialuxd"
 
 # Configuration keys
 CONF_TANK_HOST = "tank_host"

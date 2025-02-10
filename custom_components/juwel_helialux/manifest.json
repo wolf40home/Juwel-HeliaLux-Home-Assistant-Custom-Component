@@ -1,23 +1,14 @@
 {
-  "domain": "juwel_helialux",
-  "name": "Juwel HeliaLux",
-  "documentation": "https://github.com/MrSleeps/Juwel-HeliaLux-Home-Assistant-Custom-Component",
-  "issue_tracker": "https://github.com/MrSleeps/Juwel-HeliaLux-Home-Assistant-Custom-Component/issues",
+  "domain": "juwel_helialuxd",
+  "name": "Juwel Helialux Device",
+  "documentation": "https://github.com/wolf40home/Juwel-HeliaLux-Home-Assistant-Custom-Component",
+  "issue_tracker": "https://github.com/wolf40home/Juwel-HeliaLux-Home-Assistant-Custom-Component/issues",
   "integration_type": "device",
-  "dependencies": [],
-  "codeowners": ["@mrsleeps"],
+  "dependencies": [],  
+  "codeowners": ["wolf40home"],
   "requirements": ["aiohttp"],
   "iot_class": "local_polling",
-  "version": "1.1.0",
-  "config_flow": true,
-  "translations": [
-    {
-      "language": "en",
-      "path": "translations/en.json"
-    },
-    {
-      "language": "de",
-      "path": "translations/de.json"
-    }	
-  ]
+  "version": "1.0.1",
+  "config_flow": true
+
 }
