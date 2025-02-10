@@ -1,14 +1,14 @@
 {
-  "domain": "juwel_helialuxd",
+  "domain": "juwel_helialux",
   "name": "Juwel Helialux Device",
   "documentation": "https://github.com/wolf40home/Juwel-HeliaLux-Home-Assistant-Custom-Component",
   "issue_tracker": "https://github.com/wolf40home/Juwel-HeliaLux-Home-Assistant-Custom-Component/issues",
   "integration_type": "device",
   "dependencies": [],  
-  "codeowners": ["wolf40home"],
+  "codeowners": ["@mrsleeps, @wolf40home"],
   "requirements": ["aiohttp"],
   "iot_class": "local_polling",
-  "version": "1.0.1",
+  "version": "1.1.1",
   "config_flow": true
 
 }

@@ -15,10 +15,10 @@
         "name": "Rot"
       },
       "current_profile": {
-        "name": "current profile"
+        "name": "Aktuelles profil"
       },
-      "deviceTime": {
-        "name": "device Time"
+      "device_time": {
+        "name": "Gerätezeit"
       }	  
     }
   },

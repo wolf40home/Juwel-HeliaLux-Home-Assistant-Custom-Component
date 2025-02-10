@@ -33,7 +33,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
         JuwelHelialuxAttributeSensor(coordinator, tank_name, "red", default_value=0, SensorStateClass=SensorStateClass.MEASUREMENT, unit="%"),
         JuwelHelialuxAttributeSensor(coordinator, tank_name, "manualColorSimulationEnabled", default_value=False),
         JuwelHelialuxAttributeSensor(coordinator, tank_name, "manualDaytimeSimulationEnabled", default_value=False),
-        JuwelHelialuxAttributeSensor(coordinator, tank_name, "deviceTime", default_value=None),
+        JuwelHelialuxAttributeSensor(coordinator, tank_name, "device_time", default_value=None),
     ]
 
     # Add all sensors to Home Assistant
